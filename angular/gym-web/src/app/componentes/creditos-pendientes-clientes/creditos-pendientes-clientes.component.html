@@ -1,0 +1,201 @@
+<h1>Créditos pendientes por clientes</h1>
+<section>
+    <div *ngIf="creditoPendienteClientes.length<=0">
+        <h2 style="color: red;">Sin Información</h2>
+    </div>
+</section>
+<div class="overlay" *ngIf="loader===true">
+    <div class="center">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+<!--Listado CReditos-->
+<section id="creditos">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Créditos</h4>
+                    </div>
+                    <mat-form-field appearance="standard">
+                        <mat-label>Buscar</mat-label>
+                        <input matInput placeholder="Ingrese texto a buscar" #input />
+                    </mat-form-field>
+
+                    <table mat-table [dataSource]="dataSource">
+
+                        <ng-container matColumnDef="rutCliente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Rut Cliente </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.rutCliente}} </td>
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.nombre}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="paterno">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Paterno </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.paterno}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="materno">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Materno </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.materno}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="telefono">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Telefono </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.telefono}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="total">
+                            <th mat-header-cell *matHeaderCellDef> Total </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.total | currency:'CLP':'$'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accion">
+                            <th mat-header-cell *matHeaderCellDef> Acción </th>
+                            <td mat-cell *matCellDef="let credito">
+                                <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal"
+                                    data-bs-target="#agregarProductoModal" (click)="detalleVentas(credito)">
+                                    <i class="fa-solid fa-layer-group"></i> Detalle
+                                </a>
+                                <button type="button" class="btn btn-secondary" [disabled]="credito.rutCliente<0"
+                                    (click)="callUrlExcel(credito.rutCliente!)">Exportar </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;">
+                        </tr>
+                    </table>
+                    <mat-paginator #paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons [pageSize]="10"
+                        aria-label="Seleccione">
+                    </mat-paginator>
+
+
+                </div>
+            </div>
+            <!--Tarjetas laterales-->
+            <div class="col-md-3">
+                <div class="card text-center bg-success text-white mb-3">
+                    <div class="card-body">
+                        <h3>Total Compras al Credito</h3>
+                        <h4 class="display-4">
+                            <i class="fas fa-users"></i> {{creditoPendienteClientes?.length}}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <!--Fin tarjetas laterales-->
+
+        </div>
+    </div>
+</section>
+<!--Agregar cliente modal-->
+<div class="modal fade" id="agregarProductoModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h1 class="modal-title">Creditos Nombre: {{nombreCompleto}} Total: {{total | currency:'CLP'}}</h1>
+                <button class="close" data-bs-dismiss="modal" #botonCerrar>
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form #productoForm="ngForm">
+                <div class="modal-body">
+                    <ng-container *ngFor="let credito of creditoPendienteClientes;let i=index">
+                        <tr>
+                            <td>
+                                <h3><strong>Id:{{credito.id}}</strong></h3>
+                            </td>
+                            <td>
+                                <h3><strong>Fecha: {{credito.fecha | date:'dd/MM/yyyy HH:mm'}}</strong></h3>
+                            </td>
+                            <td>
+                                <h3><strong>Total: {{credito.total | currency:'CLP':'$'}}</strong></h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th scope="col" hidden>idArticulo</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">codBarras</th>
+                                            <th scope="col">Precio</th>
+                                            <th scope="col">cantidad</th>
+                                            <th scope="col">Sub Total</th>
+                                            <th scope="col">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let detalle of credito.detalles; let i = index">
+                                            <!--<th scope="row">{{i+1}}</th>-->
+                                            <td>{{detalle.idArticulo}}</td>
+                                            <td>{{detalle.nombre}}</td>
+                                            <td>{{detalle.codBarras}}</td>
+                                            <td>
+                                                <div *ngIf="detalle.isEdit">
+                                                    <input type="text" [(ngModel)]="detalle.precio" class="form-control"
+                                                        [ngModelOptions]="{standalone: true}" />
+                                                </div>
+                                                <div *ngIf="!detalle.isEdit">
+                                                    {{detalle.precio}}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div *ngIf="detalle.isEdit">
+                                                    <input type="text" [(ngModel)]="detalle.cantidad"
+                                                        class="form-control" [ngModelOptions]="{standalone: true}" />
+                                                </div>
+                                                <div *ngIf="!detalle.isEdit">
+                                                    {{detalle.cantidad}}
+                                                </div>
+
+                                            </td>
+                                            <td *ngIf="detalle.cantidad!=undefined && detalle.precio!=undefined">
+                                                {{(detalle.cantidad
+                                                *
+                                                detalle.precio) | currency:'CLP':'$'}}
+                                            </td>
+                                            <td style="width: 15%;" class="text-center">
+                                                <div *ngIf="detalle.isEdit">
+                                                    <button class="btn btn-sm btn-success">Update</button>
+                                                    <button class="btn btn-sm btn-danger"
+                                                        (click)="detalle.isEdit = false">Cancel</button>
+                                                </div>
+                                                <div *ngIf="!detalle.isEdit">
+                                                    <button class="btn btn-sm btn-success"
+                                                        (click)="onEdit(detalle)">Edit</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <label for="creditoFacturaPago">Número Factura de pago</label>
+                        <input id="creditoFacturaPago" matInput type="number" name="creditoFacturaPago" class="form-control" 
+                        #creditoFacturaPago="ngModel" [(ngModel)]="creaditoFacturaPago" style="background-color: antiquewhite;">
+                    </div>
+                    <button type="button" class="btn btn-danger" [disabled]="creaditoFacturaPago.length==0" 
+                        (click)="showDialog(creditoPendienteClientes)">Pagar</button>
+                    <button type="button" class="btn btn-primary" (click)="cerrarModal()">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<app-confirmation-dialog></app-confirmation-dialog>

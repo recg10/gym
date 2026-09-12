@@ -1,0 +1,175 @@
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0" *ngIf="logeado">
+
+    <div class="container">
+        <a routerLink="/" class="navbar-brand">Administración</a>
+        <button class="navbar-toggler" type="button" (click)="menuAbierto = !menuAbierto" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse" [class.show]="menuAbierto" id="navbarCollapse">
+
+            <!--
+        <ul class="navbar-nav">
+            <li class="nav-item px-2">
+                <a routerLink="/ventas" class="nav-link">Ventas</a>
+            </li>
+        </ul>
+-->
+            <!-- <button class="menu" mat-button [matMenuTriggerFor]="menu">Ventas</button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/ingresar-venta">
+                    <mat-icon>shopping_cart</mat-icon>
+                    <span>Ingresar</span>
+                </button>
+            </mat-menu> -->
+
+            <button class="menu" mat-button [matMenuTriggerFor]="ventas">Ventas</button>
+            <mat-menu #ventas="matMenu">                
+                <button mat-menu-item routerLink="/generar-venta" (click)="cerrarMenu()">
+                    <mat-icon>shopping_cart</mat-icon>
+                    <span>Generar venta</span>
+                </button>
+                <button mat-menu-item routerLink="/monitor-venta" (click)="cerrarMenu()">
+                    <mat-icon>remove_red_eye</mat-icon>
+                    <span>Monitor</span>
+                </button>
+                <button mat-menu-item routerLink="/informe-venta" (click)="cerrarMenu()">
+                    <mat-icon>person_search</mat-icon>
+                    <span>Informes</span>
+                </button>                
+            </mat-menu>
+
+
+            <button class="menu" mat-button [matMenuTriggerFor]="asistencia">Asistencia</button>
+            <mat-menu #asistencia="matMenu">
+                <button mat-menu-item routerLink="/asistencia" (click)="cerrarMenu()">
+                    <mat-icon>list</mat-icon>
+                    <span>Ingresar</span>
+                </button>
+                <button mat-menu-item routerLink="/asistenciaInforme" (click)="cerrarMenu()">
+                    <mat-icon>person_search</mat-icon>
+                    <span>Informes</span>
+                </button>
+            </mat-menu>
+
+            <button class="menu" mat-button [matMenuTriggerFor]="credito">Matriculas y renovaciones</button>
+            <mat-menu #credito="matMenu">               
+                <button mat-menu-item routerLink="/matriculas" (click)="cerrarMenu()">
+                    <mat-icon>assignment</mat-icon>
+                    <span>Ingresar</span>
+                </button>
+                <button mat-menu-item routerLink="/informeMatriculaRenovaciones" (click)="cerrarMenu()">
+                    <mat-icon>monetization_on</mat-icon>
+                    <span>Informe</span>
+                </button>
+                <!--
+                <button mat-menu-item routerLink="/InformeCreditoCliente" (click)="cerrarMenu()">
+                    <mat-icon>person_search</mat-icon>
+                    <span>Informe por clientes</span>
+                </button>
+                 <button mat-menu-item routerLink="/creditosPendientesClientes">
+                    <mat-icon>people</mat-icon>
+                    <span>Creditos pendientes por Cliente</span>
+                </button> -->
+            </mat-menu>
+<!--
+            <button class="menu" mat-button [matMenuTriggerFor]="informes">Informes</button>
+            <mat-menu #informes="matMenu">
+                <button mat-menu-item routerLink="/">
+                    <mat-icon>assessment</mat-icon>
+                    <span>Credito</span>
+                </button>
+                <button mat-menu-item routerLink="/stock">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    <span>Stock</span>
+                </button>              
+            </mat-menu>
+        -->
+            <button class="menu" mat-button [matMenuTriggerFor]="mantenedores">Mantenedores</button>
+            <mat-menu #mantenedores="matMenu">
+                <!-- <button mat-menu-item routerLink="/ingresar-venta">
+                    <mat-icon>face</mat-icon>
+                    <span>Usuarios</span>
+                </button> -->
+                <!-- <button mat-menu-item routerLink="/clientes">
+                    <mat-icon>accessibility_new</mat-icon>
+                    <span>Clientes</span>
+                </button>
+                <button mat-menu-item routerLink="/proveedores">
+                    <mat-icon>account_box</mat-icon>
+                    <span>Proveedores</span>
+                </button> 
+                -->
+                
+                
+                <button mat-menu-item routerLink="/articulos" (click)="cerrarMenu()">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    <span>Articulos</span>
+                </button>
+                
+                <button mat-menu-item routerLink="/parametros" (click)="cerrarMenu()">
+                    <mat-icon>lightbulb</mat-icon>
+                    <span>Parametros</span>
+                </button>
+                <button mat-menu-item routerLink="/alumnos" (click)="cerrarMenu()">
+                    <mat-icon>school</mat-icon>
+                    <span>Alumnos</span>
+                </button>
+                <button mat-menu-item routerLink="/planes" (click)="cerrarMenu()">
+                    <mat-icon>calendar_view_day</mat-icon>
+                    <span>Planes</span>
+                </button>
+                <button mat-menu-item routerLink="/usuarios" (click)="cerrarMenu()">
+                    <mat-icon>people</mat-icon>
+                    <span>Usuarios</span>
+                </button>                
+            </mat-menu>
+
+           <!--  <ul class="navbar-nav">
+                <li class="nav-item px-2">
+                    <a routerLink="/proveedores" class="nav-link">Proveedor</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item px-2">
+                    <a routerLink="/cuentas" class="nav-link">Cuentas</a>
+                    <a routerLink="/articulos" class="nav-link">Articulos</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item px-2">
+                    <a routerLink="/ingresar-venta" class="nav-link">Ingresar Venta</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item px-2">
+                    <a routerLink="/clientes" class="nav-link">Clientes</a>
+                </li>
+            </ul> -->
+            <!--
+        <ul class="navbar-nav">
+            <li class="nav-item px-2">
+                <a routerLink="/movimientos" class="nav-link">Movimiento</a>
+            </li>
+        </ul>  
+        -->
+            <ul class="navbar-nav m-lg-auto">
+                <li class="nav-item dropdown mr-3">
+                    <a ref="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <i class="fas fa-user"></i> Bienvenido {{usuarioLogueado?.nombre}}
+                    </a>
+                </li>
+                <li class="nav-item px-2">
+                    <a (click)="cerrarSession()" class="nav-link">Logout</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+
+</nav>

@@ -1,0 +1,277 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Usuario</h2>
+          <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarUsuarioModal" (click)="resetForm()">
+            <i class="fas fa-user-plus"></i> Agregar
+          </a>          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!--Listado Clientes-->
+<section id="clientes">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h4>Listado de Usuarios</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>#</th>                 
+                    <th scope="col">Rut</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Paterno</th>
+                  <th scope="col">Materno</th>
+                  <th scope="col">Telefono</th>
+                  <th scope="col">Email</th>
+                  <th scope="col" hidden>Perfil</th>
+                  <th scope="col" hidden>Clave</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let usuario of usuarios; let i = index">
+                  <th scope="row">{{i+1}}</th>
+                  <td>{{usuario.rut}}</td>
+                  <td>{{usuario.nombre}}</td>
+                  <td>{{usuario.paterno}}</td>
+                  <td>{{usuario.materno}}</td>
+                  <td>{{usuario.telefono}}</td>
+                  <td>{{usuario.email}}</td>
+                  <td hidden>{{usuario.perfil}}</td>
+                  <td hidden>{{usuario.clave}}</td>
+                  <td>                   
+                      <!-- <a href="#" class="btn btn-secondary" 
+                        data-bs-toggle="modal" data-bs-target="#agregarUsuarioModal" (click)="editarUsuario(usuario)">
+                        <i class="fas fa-user-edit"></i> Editar
+                      </a>
+                      <a  class="btn btn-danger" role="button" (click)="showDialog(usuario)">
+                        <i class="fas fa-user-slash"></i> Eliminar
+                      </a>  -->
+
+                      <button mat-mini-fab matTooltip="Editar" color="primary"
+                        data-bs-toggle="modal"  data-bs-target="#agregarUsuarioModal" (click)="editarUsuario(usuario)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+
+                      <button mat-mini-fab matTooltip="Eliminar" color="warn" (click)="showDialog(usuario)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        <!--Tarjetas laterales-->        
+        <div class="col-md-3">          
+          <div class="card text-center bg-success text-white mb-3">
+            <div class="card-body">
+              <h3>Total Propietarios</h3>
+              <h4 class="display-4">
+                <i class="fas fa-users"></i> {{usuarios?.length}}
+              </h4>
+            </div>
+          </div>          
+        </div>
+        <!--Fin tarjetas laterales-->
+  
+      </div>
+    </div>
+  </section>
+
+  <!--Agregar USUARIO modal-->
+<div class="modal fade" id="agregarUsuarioModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Agregar Usuario</h5>
+          <button class="close" data-bs-dismiss="modal"  #botonCerrar onclick="resetForm()">
+            <span>&times;</span>
+          </button>
+        </div>
+
+        <form #usuarioForm="ngForm" (ngSubmit)="agregar(usuarioForm)"> 
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label for="rut">Rut</label>
+                    <input 
+                      type="text" 
+                      name="rut" 
+                      class="form-control"
+                      #rut="ngModel"
+                      [maxLength]="12"                  
+                      [size]="12"
+                      [(ngModel)]="usuario.rut"
+                      [ngClass]="{'is-invalid': rut.errors && rut.touched}"
+                      
+                      required>
+                      <div  class="invalid-feedback">
+                        rut requerido
+                      </div> 
+                      <div  class="invalid-feedback">
+                        Debe contener al menos 2 caracteres
+                      </div>
+                  </div>
+              </div>
+            <div class="col-md-6">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                class="form-control"
+                #nombre="ngModel"
+                [(ngModel)]="usuario.nombre"
+                [ngClass]="{'is-invalid': nombre.errors && nombre.touched}"
+                required
+                minlength="2">
+                <div  class="invalid-feedback">
+                  Nombre requerido
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>            
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="paterno">Paterno</label>
+                  <input 
+                    type="text" 
+                    name="paterno" 
+                    class="form-control"
+                    #paterno="ngModel"
+                    [(ngModel)]="usuario.paterno"
+                    [ngClass]="{'is-invalid': paterno.errors && paterno.touched}"
+                    required
+                    minlength="2">
+                    <div  class="invalid-feedback">
+                      paterno requerido
+                    </div> 
+                    <div  class="invalid-feedback">
+                      Debe contener al menos 2 caracteres
+                    </div>
+                </div>
+              </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="materno">Materno</label>
+              <input 
+                type="text" 
+                name="materno" 
+                class="form-control"
+                #materno="ngModel"
+                [(ngModel)]="usuario.materno"
+                [ngClass]="{'is-invalid': materno.errors && materno.touched}"
+                required
+                minlength="2">
+                <div  class="invalid-feedback">
+                  materno requerido
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+          </div>
+          </div>
+          <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="telefono">Telefono</label>
+                  <input 
+                    type="number" 
+                    name="telefono" 
+                    class="form-control"
+                    #telefono="ngModel"
+                    [(ngModel)]="usuario.telefono"
+                    [ngClass]="{'is-invalid': telefono.errors && telefono.touched}"                
+                    required>
+                    <div  class="invalid-feedback">
+                      Telefono requerido
+                    </div> 
+                </div>
+              </div>  
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  class="form-control"
+                  #email="ngModel"
+                  [(ngModel)]="usuario.email"
+                  [ngClass]="{'is-invalid': email.errors && email.touched}"                
+                  required>
+                  <div  class="invalid-feedback">
+                    email requerido
+                  </div> 
+              </div>        
+          </div>
+          </div>
+        <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="perfil">Perfil</label>
+                  <!-- <input 
+                    type="text" 
+                    name="perfil" 
+                    class="form-control"
+                    #perfil="ngModel"
+                    maxlength="3"
+                    [(ngModel)]="usuario.perfil"
+                    [ngClass]="{'is-invalid': perfil.errors && perfil.touched}"                
+                    required>
+                    <div  class="invalid-feedback">
+                      perfil requerido
+                    </div>  -->
+                    <select id="perfil" name="perfil" class="form-control" [(ngModel)]="perfilSelected" #perfil="ngModel">
+                      <option [value]="null">Seleccione perfil</option>
+                      <option [value]="0">Administrador</option>
+                      <option [value]="1">Operador</option>                    
+                    </select>
+                </div>
+            </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="clave">Clave</label>
+          <input 
+            type="password" 
+            name="clave" 
+            class="form-control"
+            #clave="ngModel"
+            [(ngModel)]="usuario.clave"
+            [ngClass]="{'is-invalid': clave.errors && clave.touched}"                
+            required>
+            <div  class="invalid-feedback">
+              clave requerido
+            </div> 
+        </div>     
+      </div>
+        </div> 
+      </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+  
+        </form>
+  
+      </div>
+    </div>
+  </div>
+  <app-confirmation-dialog></app-confirmation-dialog>
+

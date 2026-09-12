@@ -1,0 +1,259 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Alumnos</h2>
+          <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarAlumnoModal">
+            <i class="fas fa-user-plus" matTooltip="Agregar"></i>
+          </a>          
+        </div>
+      </div>
+    </div>
+  </section>
+
+<div class="overlay" *ngIf="loader===true">
+  <div class="center">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
+
+<!--Listado Alumnos-->
+<section id="alumnos">
+    <div class="container-fluid px-3">
+      <div class="row gx-3">
+      <div class="col-12 col-lg-10">
+        <div class="card w-100">
+            <div class="card-header">
+              <h4>Listado de Alumnos</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>#</th>                 
+                    <th scope="col">Rut</th>                  
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Paterno</th>
+                    <th scope="col">Materno</th>
+                    <th scope="col">Dirección</th>
+                    <th scope="col">Fecha Nac.</th>
+                    <th scope="col">Telefono</th>                  
+                    <th scope="col">Email</th>                  
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let alumno of alumnos; let i = index">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{alumno.rut}}</td>                  
+                    <td>{{alumno.nombre}}</td>
+                    <td>{{alumno.paterno}}</td>
+                    <td>{{alumno.materno}}</td>
+                    <td>{{alumno.direccion}}</td>
+                    <td>{{alumno.fechaNacimiento}}</td>
+                    <td>{{alumno.telefono}}</td>
+                    <td>{{alumno.email}}</td>                  
+                    <td>                   
+                        <a href="#" class="btn btn-secondary" 
+                          data-bs-toggle="modal" data-bs-target="#agregarAlumnoModal" (click)="editarAlumno(alumno)">
+                          <i class="fas fa-user-edit" matTooltip="Editar"></i> 
+                        </a>
+                        <a  class="btn btn-danger" role="button" (click)="showDialog(alumno)">
+                          <i class="fas fa-user-slash" matTooltip="Eliminar"></i> 
+                        </a> 
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+          </div>
+        </div>
+        <!--Tarjetas laterales-->        
+        <div class="col-md-2">          
+          <div class="card text-center bg-success text-white mb-3">
+            <div class="card-body">
+              <h3>Total Alumnos</h3>
+              <h4 class="display-4">
+                <i class="fas fa-users"></i> {{alumnos?.length}}
+              </h4>
+            </div>
+          </div>          
+        </div>
+        <!--Fin tarjetas laterales-->
+  
+      </div>
+    </div>
+  </section>
+
+  <!--Agregar cliente modal-->
+<div class="modal fade" id="agregarAlumnoModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Agregar Alumno</h5>
+          <button class="close" data-bs-dismiss="modal"  #botonCerrar>
+            <span>&times;</span>
+          </button>
+        </div>
+  
+        
+
+        <form #alumnoForm="ngForm" (ngSubmit)="agregar(alumnoForm)"> 
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+              <div class="form-group">
+                  <label for="rut">RUT (ejemplo: 12345678-K)</label> 
+                  <input 
+                    type="text" 
+                    name="rut" 
+                    class="form-control"
+                    placeholder="12345678-K"
+                    #rut="ngModel"
+                    [(ngModel)]="alumno.rut"
+                    (input)="formatearRut($event)"
+                    [ngClass]="{'is-invalid': rut.errors && rut.touched}"
+                    required
+                    minlength="2"
+                    maxlength="10">
+                    <div  class="invalid-feedback">
+                      RUT requerido
+                    </div> 
+                    <div  class="invalid-feedback">
+                      Debe contener al menos 2 caracteres
+                    </div>
+                    <small class="form-text text-muted">Ingrese un RUT con formato chileno y 10 dígitos</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input 
+                  type="text" 
+                  name="nombre" 
+                  class="form-control"
+                  #nombre="ngModel"
+                  [(ngModel)]="alumno.nombre"
+                  [ngClass]="{'is-invalid': nombre.errors && nombre.touched}"
+                  required
+                  minlength="2">
+                  <div  class="invalid-feedback">
+                    Nombre requerido
+                  </div> 
+                  <div  class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                  </div>
+              </div>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="paterno">Paterno</label>
+                <input 
+                  type="text" 
+                  name="paterno" 
+                  class="form-control"
+                  #paterno="ngModel"
+                  [(ngModel)]="alumno.paterno"
+                  [ngClass]="{'is-invalid': paterno.errors && paterno.touched}"
+                  required
+                  minlength="2">
+                  <div  class="invalid-feedback">
+                    paterno requerido
+                  </div> 
+                  <div  class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                  </div>
+              </div>
+            </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="materno">Materno</label>
+                  <input 
+                    type="text" 
+                    name="materno" 
+                    class="form-control"
+                    #materno="ngModel"
+                    [(ngModel)]="alumno.materno"
+                    [ngClass]="{'is-invalid': materno.errors && materno.touched}"
+                    required
+                    minlength="2">
+                    <div  class="invalid-feedback">
+                      materno requerido
+                    </div> 
+                    <div  class="invalid-feedback">
+                      Debe contener al menos 2 caracteres
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="direccion">Dirección</label>
+                  <input 
+                    type="text" 
+                    name="direccion" 
+                    class="form-control"
+                    #direccion="ngModel"
+                    [(ngModel)]="alumno.direccion">                    
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fechaNacimiento">Fecha de nacimiento</label>
+                  <input 
+                    type="date" 
+                    name="fechaNacimiento" 
+                    class="form-control"
+                    #fechaNacimiento="ngModel"
+                    [(ngModel)]="alumno.fechaNacimiento">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">  
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input 
+                    type="text" 
+                    name="email" 
+                    class="form-control"
+                    #email="ngModel"
+                    [(ngModel)]="alumno.email">
+                </div>
+              </div>            
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="telefono">Teléfono (+56 9 991234567)</label>
+                  <input 
+                    type="tel" 
+                    name="telefono" 
+                    class="form-control"
+                    placeholder="+56 9 991234567"
+                    inputmode="tel"  
+                    maxlength="12"                   
+                    #telefono="ngModel"
+                    [(ngModel)]="alumno.telefono"
+                    (input)="formatearTelefono($event)"
+                    [ngClass]="{'is-invalid': telefono.errors && telefono.touched}"                
+                    required>
+                    <div  class="invalid-feedback">
+                      Telefono requerido
+                    </div> 
+                </div>
+              </div>
+            </div>
+      </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+  
+        </form>
+  
+      </div>
+    </div>
+  </div>
+  <app-confirmation-dialog></app-confirmation-dialog>
+

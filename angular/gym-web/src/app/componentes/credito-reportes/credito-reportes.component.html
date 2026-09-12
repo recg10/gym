@@ -1,0 +1,115 @@
+<h2>Informe de clientes</h2>
+
+<section id="actions">
+    <div class="container">
+        <form #facturaForm="ngForm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+
+                        <label for="rutCliente">Nombre Cliente:</label>
+                        <div class="input-field col s12">
+                            <select id="rutCliente" (change)="selecionarCliente()" name="rutCliente"
+                                class="form-control" [(ngModel)]="clienteSelected"
+                                [ngClass]="{'is-invalid': rutCliente.errors && rutCliente.touched}" required
+                                #rutCliente="ngModel">
+                                <option [ngValue]="clientes[i]" *ngFor="let dato of clientes; let i = index">
+                                    {{dato.nombre}}
+                                </option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="rut">Rut :</label>
+                        <input readonly type="text" class="form-control" [(ngModel)]="cliente.rut" #rut="ngModel"
+                            [ngModelOptions]="{standalone: true}" id="rut">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="direccion">Direccion :</label>
+                        <input type="text" readonly class="form-control" [(ngModel)]="cliente.direccion"
+                            #direccion="ngModel" [ngModelOptions]="{standalone: true}" id="direccion">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="contacto">Telefono :</label>
+                        <input type="text" readonly class="form-control" [(ngModel)]="cliente.telefono"
+                            #telefono="ngModel" [ngModelOptions]="{standalone: true}" id="telefono">
+                    </div>
+                </div>
+                <div class="col-1">
+                    <button type="submit" class="btn btn-primary" [disabled]="cliente.rut!<=0"
+                        (click)="getCreditosXClientes(cliente.rut!)">Consultar </button>
+                </div>
+
+                <div class="col-1">                    
+                    <button type="button" class="btn btn-secondary" [disabled]="cliente.rut!<=0 && creditoClientes.length>0"
+                        (click)="callUrlExcel(cliente.rut!)">Exportar </button>
+                </div>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+<section>
+    <h1>Ventas</h1>
+    <div *ngIf="creditoClientes.length<=0">
+       <h2 style="color: red;">Sin Información</h2> 
+    </div>
+    <mat-accordion class="example-headers-align" *ngIf="creditoClientes.length > 0">
+        <mat-expansion-panel *ngFor="let credito of creditoClientes; let i = index" (opened)="panelOpenState = true"
+            (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <h2>{{credito.id}} - Fecha: {{credito.fecha | date:'dd/MM/yyyy HH:mm':'America/Santiago'}} - Total:
+                        {{credito.total | currency:'CLP':'$'}} </h2>
+                </mat-panel-title>
+                <mat-panel-description>
+                    <h2> Comentario: {{credito.pago_comentario}}</h2>
+                    <!-- {{panelOpenState ? 'open' : 'closed'}}  -->
+                    <mat-icon>zoom_out_map</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th scope="col" hidden>idArticulo</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">codBarras</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">cantidad</th>
+                        <th scope="col">Sub Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let detalle of credito.detalle; let i = index">
+                        <!--<th scope="row">{{i+1}}</th>-->
+                        <td>{{detalle.idArticulo}}</td>
+                        <td>{{detalle.nombre}}</td>
+                        <td>{{detalle.codBarras}}</td>
+                        <td>{{detalle.precio}}</td>
+                        <td>{{detalle.cantidad}}</td>
+                        <td *ngIf="detalle.cantidad!=undefined && detalle.precio!=undefined">{{(detalle.cantidad *
+                            detalle.precio) | currency:'CLP':'$'}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</section>

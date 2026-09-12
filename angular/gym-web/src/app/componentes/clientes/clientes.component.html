@@ -1,0 +1,292 @@
+<h2>Clientes</h2>
+
+<section id="actions" class="py-4 mb-4 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarClienteModal"
+          (click)="reset()">
+          <i class="fas fa-user-plus"></i> Agregar
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="overlay" *ngIf="loader===true">
+  <div class="center">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
+
+<!--Listado Clientes-->
+<section id="clientes">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <div class="card">
+          <div class="card-header">
+            <h4>Listado de Clientes</h4>
+          </div>
+
+          <mat-form-field appearance="standard">
+            <mat-label>Filtro po nombre</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Filtro por nombre" #input />
+          </mat-form-field>
+
+
+          <table mat-table [dataSource]="dataSource">
+
+            <ng-container matColumnDef="rut">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Rut </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.rut}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="digito">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Digito </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.digito}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.nombre}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="paterno">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Paterno </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.paterno}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="materno">
+              <th mat-header-cell *matHeaderCellDef> Materno </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.materno}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="direccion">
+              <th mat-header-cell *matHeaderCellDef> Dirección </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.direccion}} </td>
+            </ng-container>
+            <ng-container matColumnDef="telefono">
+              <th mat-header-cell *matHeaderCellDef> Telefono </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.telefono}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="mail">
+              <th mat-header-cell *matHeaderCellDef> Email </th>
+              <td mat-cell *matCellDef="let cliente"> {{cliente.mail}} </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="acción">
+              <th mat-header-cell *matHeaderCellDef> Accion </th>
+              <td mat-cell *matCellDef="let cliente">
+                <button mat-mini-fab matTooltip="Editar" color="primary"
+                  data-bs-toggle="modal"  data-bs-target="#agregarClienteModal" (click)="editar(cliente)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-mini-fab matTooltip="Eliminar" color="warn" (click)="showDialog(cliente)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <!-- <button mat-raised-button color="primary" focusable="false" data-bs-toggle="modal"
+                  data-bs-target="#agregarClienteModal" (click)="editar(cliente)">
+                  Editar
+                </button>
+                <button mat-raised-button color="warn" focusable="false" (click)="showDialog(cliente)">
+                  Eliminar
+                </button> -->
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+
+          </table>
+          <mat-paginator #paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons [pageSize]="10"
+            aria-label="Select page of periodic elements">
+          </mat-paginator>
+
+
+        </div>
+      </div>
+      <!--Tarjetas laterales-->
+      <div class="col-md-3">
+        <div class="card text-center bg-success text-white mb-3">
+          <div class="card-body">
+            <h3>Total Clientes</h3>
+            <h4 class="display-4">
+              <i class="fas fa-users"></i> {{clientes?.length}}
+            </h4>
+          </div>
+        </div>
+      </div>
+      <!--Fin tarjetas laterales-->
+
+    </div>
+  </div>
+</section>
+
+<!--Agregar cliente modal-->
+<div class="modal fade" id="agregarClienteModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ancho-popup">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Agregar Cliente</h5>
+        <button class="close" data-bs-dismiss="modal" #botonCerrar>
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <form #clienteForm="ngForm" (ngSubmit)="agregar(clienteForm)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="rut">Rut</label>
+            <div class="row">
+              <div class="col-md-5">
+                <input type="text" name="rut" id="rut" class="form-control" 
+                  #rut="ngModel" [(ngModel)]="cliente.rut" 
+                  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                  [ngClass]="{'is-invalid': rut.errors && rut.touched}" required
+                  maxlength="12" style="width: 200px;">
+                <div class="invalid-feedback">
+                  rut requerido
+                </div>
+                <div class="invalid-feedback">
+                  Debe contener al menos 1 caracteres
+                </div>
+              </div>
+
+              <div class="col-md-2">
+
+                <input type="text" name="digito" class="form-control" #digito="ngModel" [(ngModel)]="cliente.digito"
+                  [ngClass]="{'is-invalid': digito.errors && digito.touched}" required minlength="1" maxlength="2"
+                  style="width: 50px;">
+                <div class="invalid-feedback">
+                  digito requerido
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" #nombre="ngModel"
+              [(ngModel)]="cliente.nombre" [ngClass]="{'is-invalid': nombre.errors && nombre.touched}" required
+              maxlength="100"
+              minlength="2" style="width: 500px;">
+            <div class="invalid-feedback">
+              Nombre requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="paterno">Paterno</label>
+            <input type="text" name="paterno" id="paterno" class="form-control" #paterno="ngModel"
+              [(ngModel)]="cliente.paterno" [ngClass]="{'is-invalid': paterno.errors && paterno.touched}" required
+              minlength="2" style="width: 500px;" maxlength="50">
+            <div class="invalid-feedback">
+              paterno requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="materno">Materno</label>
+            <input type="text" name="materno" id="materno" class="form-control" #materno="ngModel"
+              [(ngModel)]="cliente.materno" [ngClass]="{'is-invalid': materno.errors && materno.touched}" required
+              minlength="2" style="width: 500px;" maxlength="50">
+            <div class="invalid-feedback">
+              materno requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <input type="text" name="direccion" id="direccion" class="form-control" #direccion="ngModel"
+              [(ngModel)]="cliente.direccion" [ngClass]="{'is-invalid': direccion.errors && direccion.touched}" required
+              minlength="2" style="width: 500px;" maxlength="100">
+            <div [hidden]="!direccion.errors?.['required']" class="invalid-feedback">
+              Dirección requerido
+            </div>
+            <div [hidden]="!direccion.errors?.['minlength']" class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comuna">Comuna</label>
+            <input type="text" name="comuna" id="comuna" class="form-control" #comuna="ngModel"
+              [(ngModel)]="cliente.comuna" [ngClass]="{'is-invalid': comuna.errors && comuna.touched}" required
+              minlength="3" style="width: 500px;" maxlength="50">
+            <div [hidden]="!comuna.errors?.['required']" class="invalid-feedback">
+              Comuna requerido
+            </div>
+            <div [hidden]="!comuna.errors?.['minlength']" class="invalid-feedback">
+              Debe contener al menos 3 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Telefono</label>
+            <input type="number" name="telefono" id="telefono" class="form-control" #telefono="ngModel"
+              [(ngModel)]="cliente.telefono" [ngClass]="{'is-invalid': telefono.errors && telefono.touched}"
+              style="width: 500px;" maxlength="12">
+          </div>
+
+          <div class="form-group">
+            <label for="mail">Email</label>
+            <input type="email" name="mail" id="mail" class="form-control" #mail="ngModel" [(ngModel)]="cliente.mail"
+              [ngClass]="{'is-invalid': mail.errors && mail.touched}" style="width: 500px;"
+              maxlength="50">
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+<app-confirmation-dialog></app-confirmation-dialog>
+<!--
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Rut</th>
+        <th scope="col">Digito</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Dirección</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of clientes; let i = index">
+        <th scope="row">{{i+1}}</th>
+        <td>{{cliente.rut}}</td>
+        <td>{{cliente.digito}}</td>
+        <td>{{cliente.nombre}}</td>
+        <td>@{{cliente.direccion}}</td>
+        <td>@{{cliente.telefono}}</td>
+        <td>
+            <div class="container">
+                <button class="btn btn-warning btn-rounded" type="button">Modificar</button>
+                <button class="btn btn-danger btn-rounded" type="button">Eliminar</button>
+            </div>            
+        </td>
+      </tr>     
+    </tbody>
+  </table>
+-->

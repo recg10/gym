@@ -1,0 +1,184 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Planes</h2>
+          <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarAlumnoModal" (click)="reset()">
+            <i class="fas fa-user-plus"></i> Agregar
+          </a>          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!--Listado Alumnos-->
+<section id="alumnos">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h4>Listado de Planes</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>#</th>                 
+                  <th scope="col">Id</th>                  
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Dias</th>                              
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let plan of planes; let i = index">
+                  <th scope="row">{{i+1}}</th>
+                  <td>{{plan.id}}</td>                  
+                  <td>{{plan.nombre}}</td>
+                  <td>{{plan.precio}}</td>                             
+                  <td>{{plan.dias}}</td>
+                  <td>
+                    <button mat-mini-fab matTooltip="Editar" color="primary"
+                    data-bs-toggle="modal"  data-bs-target="#agregarAlumnoModal" (click)="editarPlan(plan)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-mini-fab matTooltip="Eliminar" color="warn" (click)="showDialog(plan)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                      <!-- <a href="#" class="btn btn-secondary" 
+                        data-bs-toggle="modal" data-bs-target="#agregarAlumnoModal" (click)="editarPlan(plan)">
+                        <i class="fas fa-user-edit"></i> Editar
+                      </a> -->
+                      <!-- <a  class="btn btn-danger" role="button" (click)="showDialog(plan)">
+                        <i class="fas fa-user-slash"></i> Eliminar
+                      </a>  -->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        <!--Tarjetas laterales-->        
+        <div class="col-md-3">          
+          <div class="card text-center bg-success text-white mb-3">
+            <div class="card-body">
+              <h3>Total Planes</h3>
+              <h4 class="display-4">
+                <i class="fas fa-users"></i> {{planes?.length}}
+              </h4>
+            </div>
+          </div>          
+        </div>
+        <!--Fin tarjetas laterales-->
+  
+      </div>
+    </div>
+  </section>
+
+  <!--Agregar cliente modal-->
+<div class="modal fade" id="agregarAlumnoModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Agregar Plan</h5>
+          <button class="close" data-bs-dismiss="modal"  #botonCerrar>
+            <span>&times;</span>
+          </button>
+        </div>
+  
+        
+
+        <form #planForm="ngForm" (ngSubmit)="agregar(planForm)"> 
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="id">Id</label> 
+                <input 
+                  type="text" 
+                  name="id" 
+                  class="form-control"
+                  #id="ngModel"
+                  [(ngModel)]="plan.id"
+                  [ngClass]="{'is-invalid': id.errors && id.touched}"
+                  required
+                  minlength="1">
+                  <div  class="invalid-feedback">
+                    id requerido
+                  </div> 
+                  <div  class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                  </div>
+              </div>
+
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                class="form-control"
+                #nombre="ngModel"
+                [(ngModel)]="plan.nombre"
+                [ngClass]="{'is-invalid': nombre.errors && nombre.touched}"
+                required
+                minlength="1">
+                <div  class="invalid-feedback">
+                  Nombre requerido
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="precio">Precio</label>
+              <input 
+                type="text" 
+                name="precio" 
+                class="form-control"
+                #precio="ngModel"
+                [(ngModel)]="plan.precio"
+                [ngClass]="{'is-invalid': precio.errors && precio.touched}"
+                required
+                minlength="1">
+                <div  class="invalid-feedback">
+                  precio requerido
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="dias">Dias</label>
+              <input 
+                type="text" 
+                name="dias" 
+                class="form-control"
+                #dias="ngModel"
+                [(ngModel)]="plan.dias"
+                [ngClass]="{'is-invalid': dias.errors && dias.touched}"
+                required
+                minlength="1">
+                <div  class="invalid-feedback">
+                  dias requerido
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+           
+      </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+  
+        </form>
+  
+      </div>
+    </div>
+  </div>
+  <app-confirmation-dialog></app-confirmation-dialog>
+

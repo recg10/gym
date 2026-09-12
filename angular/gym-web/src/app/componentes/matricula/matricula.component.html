@@ -1,0 +1,392 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <h2>Matriculas y renovaciones</h2>
+          <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarMatriculaModal">
+            <i class="fas fa-user-plus"></i> Crear nueva matricula 
+          </a>          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+<div class="overlay" *ngIf="loader===true">
+    <div class="center">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+<!--Listado Alumnos-->
+<section id="matriculas">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h4>Listado de Matriculas</h4>
+            </div>
+
+            <mat-form-field appearance="standard">
+              <mat-label>Buscar</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese texto a buscar" aria-label="Buscar matrículas">
+            </mat-form-field>
+
+            <div class="table-responsive">
+              <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+                <ng-container matColumnDef="accion">
+                  <th mat-header-cell *matHeaderCellDef>Acción</th>
+                  <td mat-cell *matCellDef="let matricula">
+                    <div class="action-buttons">
+                      <button mat-mini-fab matTooltip="Registrar asistencia" color="accent"
+                        (click)="registrarAsistencia(matricula)">
+                        <mat-icon>how_to_reg</mat-icon>
+                      </button>
+                      <button mat-mini-fab matTooltip="Editar" color="primary"
+                        data-bs-toggle="modal" data-bs-target="#agregarMatriculaModal" (click)="editar(matricula)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-mini-fab matTooltip="Eliminar" color="warn" (click)="showDialog(matricula)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                      <button mat-mini-fab matTooltip="Renovar mensualidad" color="accent"
+                        data-bs-toggle="modal" data-bs-target="#renovarMatriculaModal" (click)="showDialogRenovacion(matricula)">
+                        <mat-icon>autorenew</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- <ng-container matColumnDef="numero">
+                  <th mat-header-cell *matHeaderCellDef>#</th>
+                  <td mat-cell *matCellDef="let matricula; let i = index">{{dataSource.filteredData.indexOf(matricula) + 1}}</td>
+                </ng-container> -->
+
+                <ng-container matColumnDef="tipo">
+                  <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.tipo}}</td>
+                </ng-container>
+
+                <!-- <ng-container matColumnDef="activa">
+                  <th mat-header-cell *matHeaderCellDef>Vigente</th>
+                  <td mat-cell *matCellDef="let matricula">
+                    <span class="badge bg-success" *ngIf="matricula.activa">Activa</span>
+                    <span class="badge bg-danger" *ngIf="!matricula.activa">Inactiva</span>
+                  </td>
+                </ng-container> -->
+
+                <ng-container matColumnDef="tipoPlan">
+                  <th mat-header-cell *matHeaderCellDef>Tipo plan</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.tipoPlan}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="alumnoRut">
+                  <th mat-header-cell *matHeaderCellDef>RUT Alumno</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.alumnoRut}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="alumnoNombre">
+                  <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.alumnoNombre}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="alumnoPaterno">
+                  <th mat-header-cell *matHeaderCellDef>Paterno</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.alumnoPaterno}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="alumnoMaterno">
+                  <th mat-header-cell *matHeaderCellDef>Materno</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.alumnoMaterno}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="fechaInicio">
+                  <th mat-header-cell *matHeaderCellDef>Fecha inicio</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.fechaInicio}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="fechaVencimiento">
+                  <th mat-header-cell *matHeaderCellDef>Fecha vencimiento</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.fechaVencimiento}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="diasContratados">
+                  <th mat-header-cell *matHeaderCellDef>Días ctr.</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.diasContratados}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="diasUtilizados">
+                  <th mat-header-cell *matHeaderCellDef>Días util.</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.diasUtilizados}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="usuarioRut">
+                  <th mat-header-cell *matHeaderCellDef>Usuario</th>
+                  <td mat-cell *matCellDef="let matricula">{{matricula.usuarioRut}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;" [ngClass]="getClaseFilaMatricula(row)"></tr>
+              </table>
+            </div>
+            <mat-paginator #paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons [pageSize]="10" aria-label="Seleccione página"></mat-paginator>
+          </div>
+        </div>
+        <!--Tarjetas laterales-->        
+        <div class="col-md-2">          
+          <div class="card text-center bg-success text-white mb-3">
+            <div class="card-body">
+              <h3>Total Registros</h3>
+              <h3 class="display-4">
+                <i class="fas fa-users"></i> {{matriculas?.length}}
+              </h3>
+            </div>
+          </div>          
+        </div>
+        <!--Fin tarjetas laterales-->
+  
+      </div>
+    </div>
+  </section>
+
+<!--Agregar cliente modal-->
+<div class="modal fade" id="agregarMatriculaModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Agregar Matricula</h5>
+          <button class="close" data-bs-dismiss="modal"  #botonCerrar>
+            <span>&times;</span>
+          </button>
+        </div>
+        <form #matriculaForm="ngForm" (ngSubmit)="agregar(matriculaForm)"> 
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="rut">Tipo de Plan</label> 
+                  <select id="plan" (change)="selecionarPlan()" name="plan"
+                        class="form-control" [(ngModel)]="planSelected"
+                        [ngClass]="{'is-invalid': plan.errors && plan.touched}" required
+                        #plan="ngModel">
+                        <option [ngValue]="planes[i]" *ngFor="let dato of planes; let i = index">
+                            {{dato.nombre}}
+                        </option>      
+                  </select>
+                  <div  class="invalid-feedback">
+                    tipo de plan requerido
+                  </div> 
+                  <div  class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                  </div>
+              </div>
+
+              <div class="form-group alumno-search-group">
+                <label for="alumnoSearch">Buscar Alumno</label>
+                <input id="alumnoSearch" type="text" class="form-control" placeholder="Rut, nombre o apellido"
+                  [(ngModel)]="alumnoSearchTerm"
+                  (ngModelChange)="onSearch($event)"
+                  (focus)="onAlumnoFocus()"
+                  name="alumnoSearch"
+                  autocomplete="off">
+                <div class="form-text text-muted mb-2">
+                  Escribe rut, nombre, paterno o materno para filtrar la lista.
+                </div>
+
+                <div class="search-results card" *ngIf="showAlumnoResults && filteredOptions?.length">
+                  <div class="search-result-item" *ngFor="let opt of filteredOptions" (mousedown)="selectAlumno(opt)">
+                    <div class="result-title">{{opt.rut}} - {{opt.nombre}} {{opt.paterno}} {{opt.materno}}</div>
+                    <div class="result-subtitle">{{opt.email || 'Sin email'}} · {{opt.direccion || 'Sin dirección'}}</div>
+                  </div>
+                </div>
+
+                <div class="no-results text-danger" *ngIf="showAlumnoResults && alumnoSearchTerm && !filteredOptions?.length">
+                  No se encontró ningún alumno.
+                </div>
+
+                <input type="hidden" name="alumnoRut" [(ngModel)]="matricula.alumnoRut" #alumno="ngModel" required>
+
+                <div class="selected-alumno mt-3" *ngIf="alumnoSeleccionado?.rut">
+                  <strong>Alumno seleccionado:</strong>
+                  <p class="mb-0">{{alumnoSeleccionado?.nombre}} {{alumnoSeleccionado?.paterno}} {{alumnoSeleccionado?.materno}}</p>
+                  <small>{{alumnoSeleccionado?.rut}}</small>
+                </div>
+
+                <div class="invalid-feedback">
+                  Alumno requerido
+                </div>
+              </div>
+
+            <div class="form-group">
+              <label for="fecha_registro">Fecha de Registro</label>
+              <input id="fecha_registro"
+                type="date" 
+                name="fecha_registro" 
+                class="form-control"
+                #fecha_registro="ngModel"
+                [(ngModel)]="matricula.fechaInicio"
+                [ngClass]="{'is-invalid': fecha_registro.errors && fecha_registro.touched}"
+                required
+                minlength="2">
+                <div  class="invalid-feedback">
+                  Fecha de registro requerida
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="dias_contratados">Días Contratados</label>
+              <input id="dias_contratados"
+                type="number" 
+                name="dias_contratados" 
+                class="form-control"
+                #dias_contratados="ngModel"
+                [(ngModel)]="matricula.diasContratados"
+                [ngClass]="{'is-invalid': dias_contratados.errors && dias_contratados.touched}"              
+                required
+                minlength="2">
+                <div [hidden]="!dias_contratados.errors?.['required']" class="invalid-feedback">
+                    Días contratados requeridos
+                </div> 
+                <div [hidden]="!dias_contratados.errors?.['minlength']" class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                </div>
+            </div> 
+
+            <div class="form-group">
+              <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+              <input id="fecha_vencimiento"
+                type="date" 
+                name="fechaVencimiento" 
+                class="form-control"
+                #fechaVencimiento="ngModel"
+                [(ngModel)]="matricula.fechaVencimiento"
+                [ngClass]="{'is-invalid': fechaVencimiento.errors && fechaVencimiento.touched}"                
+                required>
+                <div  class="invalid-feedback">
+                  Fecha de vencimiento requerida
+                </div>              
+            </div>
+
+            <div *ngIf="matricula.tipo=='modificar'" class="form-group">
+              <label for="activa">Activa</label>
+              <input id="activa"
+                type="checkbox" 
+                name="activa" 
+                #activa="ngModel"
+                [(ngModel)]="matricula.activa">
+            </div> 
+  
+            
+           
+      </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+  
+        </form>
+  
+      </div>
+    </div>
+  </div>
+
+
+  <!--Agregar cliente modal-->
+<div class="modal fade" id="renovarMatriculaModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Renovar Matricula</h5>
+          <button class="close" data-bs-dismiss="modal"  #botonRenovacionCerrar>
+            <span>&times;</span>
+          </button>
+        </div>
+        <form #renovarForm="ngForm" (ngSubmit)="renovar(renovarForm)"> 
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="rut">Tipo de Plan</label> 
+                  <select id="plan" (change)="selecionarPlan()" name="plan"
+                        class="form-control" [(ngModel)]="planSelected"
+                        [ngClass]="{'is-invalid': plan.errors && plan.touched}" required
+                        #plan="ngModel">
+                        <option [ngValue]="planes[i]" *ngFor="let dato of planes; let i = index">
+                            {{dato.nombre}}
+                        </option>      
+                  </select>
+                  <div  class="invalid-feedback">
+                    tipo de plan requerido
+                  </div> 
+                  <div  class="invalid-feedback">
+                    Debe contener al menos 2 caracteres
+                  </div>
+            </div>
+            <div class="form-group">
+              <h2>{{matricula?.alumnoRut}} {{matricula?.alumnoNombre}} {{matricula?.alumnoPaterno}} {{matricula?.alumnoMaterno}}</h2>                           
+            </div> 
+            <div class="form-group">
+              <label for="fecha_registro">Fecha de Registro</label>
+              <input id="fecha_registro"
+                type="date" 
+                name="fecha_registro" 
+                class="form-control"
+                #fecha_registro="ngModel"
+                [(ngModel)]="matricula.fechaInicio"
+                [ngClass]="{'is-invalid': fecha_registro.errors && fecha_registro.touched}"
+                required
+                minlength="2">
+                <div  class="invalid-feedback">
+                  Fecha de registro requerida
+                </div> 
+                <div  class="invalid-feedback">
+                  Debe contener al menos 2 caracteres
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="dias_contratados">Días Contratados</label>
+              <input id="dias_contratados"
+                type="number" 
+                name="dias_contratados" 
+                class="form-control"
+                #dias_contratados="ngModel"
+                [(ngModel)]="matricula.diasContratados"
+                [ngClass]="{'is-invalid': dias_contratados.errors && dias_contratados.touched}"              
+                required
+                minlength="1">
+                <div [hidden]="!dias_contratados.errors?.['required']" class="invalid-feedback">
+                    Días contratados requeridos
+                </div> 
+                <div [hidden]="!dias_contratados.errors?.['minlength']" class="invalid-feedback">
+                    Debe contener al menos 1 caracter
+                </div>
+            </div> 
+
+            <div class="form-group">
+              <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+              <input id="fecha_vencimiento"
+                type="date" 
+                name="fechaVencimiento" 
+                class="form-control"
+                #fechaVencimiento="ngModel"
+                [(ngModel)]="matricula.fechaVencimiento"
+                [ngClass]="{'is-invalid': fechaVencimiento.errors && fechaVencimiento.touched}"                
+                required>
+                <div  class="invalid-feedback">
+                  Fecha de vencimiento requerida
+                </div>              
+            </div>           
+      </div>
+      <div *ngIf="msgError!=''" class="error-text" style="color: red;">
+          <li>
+              <strong>{{msgError}}</strong>
+          </li>
+      </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Renovar</button>
+          </div>  
+        </form>  
+      </div>
+    </div>
+  </div>
+
+  <app-confirmation-dialog></app-confirmation-dialog>
+

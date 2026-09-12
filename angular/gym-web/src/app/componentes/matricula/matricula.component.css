@@ -1,0 +1,249 @@
+.alumno-search-group {
+  position: relative;
+}
+
+.alumno-search-group .search-results {
+  position: static;
+  width: 100%;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  z-index: 20;
+}
+
+.search-result-item {
+  cursor: pointer;
+  padding: 0.75rem 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.result-title {
+  font-weight: 600;
+  color: #212529;
+}
+
+.result-subtitle {
+  font-size: 0.88rem;
+  color: #6c757d;
+}
+
+.selected-alumno {
+  border: 1px solid #e9ecef;
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+}
+
+.no-results {
+  font-size: 0.95rem;
+}
+
+#matriculas .card {
+  overflow: hidden;
+}
+
+#matriculas .card-header {
+  padding: 1rem 1.25rem;
+}
+
+#matriculas .card-header h4 {
+  margin: 0;
+}
+
+#matriculas mat-form-field {
+  display: block;
+  max-width: 420px;
+  margin: 1rem 1.25rem 0.5rem;
+}
+
+#matriculas .table-responsive {
+  margin: 0;
+  padding: 0 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#matriculas table.mat-table {
+  width: max-content;
+  min-width: 1480px;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+
+#matriculas .mat-header-cell,
+#matriculas .mat-cell {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  line-height: 1.35;
+}
+
+#matriculas .mat-header-cell {
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+#matriculas .mat-cell {
+  color: #334155;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+#matriculas .mat-row:nth-child(even) {
+  background: #fafbfd;
+}
+
+#matriculas .mat-row.fila-verde {
+  background: rgba(40, 167, 69, 0.18);
+}
+
+#matriculas .mat-row.fila-verde:hover {
+  background: rgba(40, 167, 69, 0.28);
+}
+
+#matriculas .mat-row.fila-amarillo {
+  background: rgba(255, 193, 7, 0.22);
+}
+
+#matriculas .mat-row.fila-amarillo:hover {
+  background: rgba(255, 193, 7, 0.32);
+}
+
+#matriculas .mat-row.fila-rojo {
+  background: rgba(220, 53, 69, 0.18);
+}
+
+#matriculas .mat-row.fila-rojo:hover {
+  background: rgba(220, 53, 69, 0.28);
+}
+
+#matriculas .mat-row:hover {
+  background: #eef6ff;
+}
+
+#matriculas .mat-column-accion {
+  width: 125px;
+  min-width: 125px;
+  white-space: nowrap;
+}
+
+#matriculas .mat-column-numero {
+  width: 55px;
+  min-width: 55px;
+  text-align: center;
+}
+
+#matriculas .mat-column-tipo,
+#matriculas .mat-column-activa {
+  width: 110px;
+  min-width: 110px;
+}
+
+#matriculas .mat-column-tipoPlan {
+  width: 150px;
+  min-width: 150px;
+}
+
+#matriculas .mat-column-alumnoRut {
+  width: 125px;
+  min-width: 125px;
+}
+
+#matriculas .mat-column-alumnoNombre,
+#matriculas .mat-column-alumnoPaterno,
+#matriculas .mat-column-alumnoMaterno {
+  width: 100px;
+  min-width: 100px;
+}
+
+#matriculas .mat-column-fechaInicio,
+#matriculas .mat-column-fechaVencimiento {
+  width: 135px;
+  min-width: 135px;
+}
+
+#matriculas .mat-column-diasContratados,
+#matriculas .mat-column-diasUtilizados {
+  width: 50px;
+  min-width: 50px;
+  white-space: normal;
+}
+
+#matriculas .mat-column-usuarioRut {
+  width: 125px;
+  min-width: 125px;
+}
+
+#matriculas .mat-column-accion button {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+}
+
+#matriculas .action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 36px);
+  gap: 0.45rem;
+  justify-content: start;
+}
+
+#matriculas .mat-column-accion .mat-icon {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+#matriculas mat-paginator {
+  display: block;
+  margin: 0 0.75rem;
+}
+
+@media (max-width: 768px) {
+  #matriculas .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  #matriculas .card-header {
+    padding: 0.85rem 1rem;
+  }
+
+  #matriculas mat-form-field {
+    max-width: none;
+    margin: 0.75rem 1rem 0.5rem;
+  }
+
+  #matriculas .table-responsive {
+    padding: 0 0.75rem;
+    scrollbar-width: thin;
+  }
+
+  #matriculas table.mat-table {
+    min-width: 1480px;
+  }
+
+  #matriculas .mat-header-cell,
+  #matriculas .mat-cell {
+    padding: 0.75rem 0.8rem;
+  }
+
+  #matriculas mat-paginator {
+    margin: 0;
+  }
+}

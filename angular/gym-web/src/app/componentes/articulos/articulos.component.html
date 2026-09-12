@@ -1,0 +1,278 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+        <h2>Articulos</h2>
+      </div>
+      <div class="col-md-2">        
+        <a href="#" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#agregarProductoModal"
+          (click)="reset()">
+          <i class="fas fa-user-plus"></i> Agregar
+        </a>
+      </div>      
+      <div class="col-md-2" style="text-align: center;">        
+        <button type="button" class="btn btn-secondary" [disabled]="articulos.length === 0"
+            (click)="callUrlExcel()">Exportar 
+        </button>
+      </div>
+      <div class="col-md-6" style="text-align: center;">        
+        <button disabled type="button" class="btn btn-warning" (click)="informarStockCritico()">
+          <mat-icon>connect_without_contact</mat-icon>
+          Informar stock crítico
+        </button>
+      </div>
+      <div class="row">
+        <h1 class="text-bg-danger">{{errorMessage}}</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="overlay" *ngIf="loader===true">
+  <div class="center">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
+
+<!--Listado Clientes-->
+<section id="clientes">
+  <div class="container-fluid px-3">
+    <div class="row gx-3">
+      <div class="col-12 col-lg-10">
+        <div class="card w-100">
+          <div class="card-header">
+            <h4>Listado de Articulos</h4>
+          </div>
+
+          <div class="table-toolbar">
+            <mat-form-field appearance="standard" class="full-width">
+              <mat-label>Buscar</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese texto a buscar" #input />
+            </mat-form-field>
+          </div>
+
+          <div class="mat-table-wrapper">
+            <table mat-table [dataSource]="dataSource" class="full-width-table">
+
+            <ng-container matColumnDef="id" *ngIf="false">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> id </th>
+              <td mat-cell *matCellDef="let articulo"> {{articulo.id}} </td>
+            </ng-container>
+
+            <!-- <ng-container matColumnDef="codigo">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita"> Código </th>
+              <td mat-cell *matCellDef="let articulo"> {{articulo.codigo}} </td>
+            </ng-container> -->
+
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-negrita"> Nombre </th>
+              <td mat-cell *matCellDef="let articulo" attr.data-label="Nombre"><span class="cell-value">{{articulo.nombre}}</span></td>
+            </ng-container>
+
+            <!-- <ng-container matColumnDef="claseDescripcion">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita"> Clase </th>
+              <td mat-cell *matCellDef="let articulo" attr.data-label="Clase"><span class="cell-value">{{articulo.claseDescripcion}}</span></td>
+            </ng-container> -->
+
+            <!-- <ng-container matColumnDef="marca">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita"> Marca </th>
+              <td mat-cell *matCellDef="let articulo"> {{articulo.marca}} </td>
+            </ng-container> -->
+
+            <ng-container matColumnDef="codBarras">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita hide-mobile">Cod.<br />de Barras</th>
+              <td mat-cell *matCellDef="let articulo" class="hide-mobile" attr.data-label="Cod. de Barras"><span class="cell-value">{{articulo.codBarras}}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="precio_venta">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita"> Precio </th>
+              <td mat-cell *matCellDef="let articulo" attr.data-label="Precio"><span class="cell-value">{{articulo.precio_venta | currency:'CLP':'$'}}</span></td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita">Stock </th>
+              <td mat-cell *matCellDef="let articulo" class="col-text-center" attr.data-label="Stock"><span class="cell-value">{{articulo.stock }}</span></td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock_min">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita hide-mobile">Stock<br />Mínimo</th>
+              <td mat-cell *matCellDef="let articulo" class="col-text-center hide-mobile" attr.data-label="Stock Mínimo"><span class="cell-value">{{articulo.stock_min}}</span></td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="acción">
+              <th mat-header-cell *matHeaderCellDef class="col-negrita">Acción</th>
+              <td mat-cell *matCellDef="let articulo" class="action-cell" attr.data-label="Acción">
+                <span class="cell-value action-buttons">
+                  <button mat-mini-fab matTooltip="Editar" color="primary"
+                    data-bs-toggle="modal"  data-bs-target="#agregarProductoModal" (click)="editar(articulo)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button mat-mini-fab matTooltip="Eliminar" color="warn" (click)="showDialog(articulo)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+          </table>
+          </div>
+          <mat-paginator #paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons [pageSize]="10"
+            aria-label="Select page of periodic elements">
+          </mat-paginator>
+
+
+        </div>
+      </div>
+      <!--Tarjetas laterales-->
+      <div class="col-12 col-lg-2">
+        <div class="card text-center bg-success text-white mb-3">
+          <div class="card-body">
+            <h3>Total Articulos</h3>
+            <h4 class="display-4">
+              <i class="fas fa-users"></i> {{articulos?.length}}
+            </h4>
+          </div>
+        </div>
+      </div>
+      <!--Fin tarjetas laterales-->
+
+    </div>
+  </div>
+</section>
+
+<!--Agregar cliente modal-->
+<div class="modal fade" id="agregarProductoModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Agregar Articulo</h5>
+        <button class="close" data-bs-dismiss="modal" #botonCerrar>
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <form #productoForm="ngForm" (ngSubmit)="agregar(productoForm)">
+
+        <div class="modal-body">
+
+          <input type="hidden" name="id" [ngModel]="articulo.id">
+
+          <!-- <div class="form-group">
+            <label for="codigo">codigo</label>
+            <input id="codigo" type="text" name="codigo" class="form-control" #codigo="ngModel"
+              [(ngModel)]="articulo.codigo" [ngClass]="{'is-invalid': codigo.errors && codigo.touched}" required
+              minlength="2">
+            <div class="invalid-feedback">
+              Nombre requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div> -->
+
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" name="nombre" class="form-control" #nombre="ngModel"
+              [(ngModel)]="articulo.nombre" [ngClass]="{'is-invalid': nombre.errors && nombre.touched}" 
+              required minlength="2">
+            <div class="invalid-feedback">
+              Nombre requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="codBarras">Codigo de barras</label>
+            <input id="codBarras" type="text" name="codBarras" class="form-control" #codBarras="ngModel" 
+            [(ngModel)]="articulo.codBarras" [ngClass]="{'is-invalid': codBarras.errors && codBarras.touched}" 
+            required minlength="2">
+            <div class="invalid-feedback">
+              Codigo de barras requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <input type="hidden" name="claseDescripcion" class="form-control" #claseDescripcion="ngModel"
+            [(ngModel)]="articulo.claseDescripcion">
+
+          <div class="form-group">
+            <label for="claseId">Clase</label>
+            <select id="claseId" name="claseId" class="form-control" [(ngModel)]="articulo.claseId" #claseId="ngModel">
+              <option value="">Seleccione</option>
+              <option value="{{dato.id}}" *ngFor="let dato of clases; let i = index">
+                {{dato.descripcion}}
+              </option>
+            </select>
+
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="marca">Marca</label>
+            <input id="marca" type="text" name="marca" class="form-control" #marca="ngModel"
+              [(ngModel)]="articulo.marca" [ngClass]="{'is-invalid': marca.errors && marca.touched}" required
+              minlength="2">
+            <div class="invalid-feedback">
+              marca requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div> -->
+
+          <div class="form-group">
+            <label for="precio_venta">Precio Venta</label>
+            <input id="precio_venta" type="text" name="precio_venta" class="form-control" #precio_venta="ngModel"
+              [(ngModel)]="articulo.precio_venta"
+              [ngClass]="{'is-invalid': precio_venta.errors && precio_venta.touched}" required minlength="2">
+            <div class="invalid-feedback">
+              Nombre requerido
+            </div>
+            <div class="invalid-feedback">
+              Debe contener al menos 2 caracteres
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="stock">Stock</label>
+            <input id="stock" type="text" name="stock" class="form-control" #stock="ngModel"
+              [(ngModel)]="articulo.stock" 
+              [ngClass]="{'is-invalid': stock.errors && stock.touched}" required
+              minlength="1">
+            <div class="invalid-feedback">
+              stock requerido
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="stock_min">Stock Mínimo</label>
+            <input id="stock_min" type="text" name="stock_min" class="form-control" #stock_min="ngModel"
+              [(ngModel)]="articulo.stock_min" [ngClass]="{'is-invalid': stock_min.errors && stock_min.touched}"
+              required minlength="1">
+            <div class="invalid-feedback">
+              Stock minimo requerido
+            </div>
+
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<app-confirmation-dialog></app-confirmation-dialog>

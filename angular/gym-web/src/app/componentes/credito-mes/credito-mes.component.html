@@ -1,0 +1,130 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Creditos Por Mes - Seleccione un periodo a consultar, en caso de dejar vacio cargará todos los Créditos por cobrar</h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                <mat-label>Mes/Año</mat-label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="month" name="start" min="2023-01" value="2025-12" [(ngModel)]="fechaMesAno" id="fechaMesAno">
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn btn-primary" (click)="consultarCreditos()" title="Seleccione un periodo a consultar, en caso de dejar vacio cargará todos los Créditos por cobrar">Consultar</button>
+            </div>
+
+            <div class="col-md-6">
+                <button type="button" class="btn btn-primary" [disabled]="bloquear"
+                (click)="notificarCreditos()">Notificar creditos pendientes</button>
+            </div>
+
+        </div>
+    </div>
+
+
+</section>
+<div class="overlay" *ngIf="loader===true">
+    <div class="center">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+<!--Listado Clientes-->
+<section id="clientes">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Créditos</h4>
+                    </div>
+
+                    <mat-form-field appearance="standard">
+                        <mat-label>Buscar</mat-label>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese texto a buscar" #input />
+                    </mat-form-field>
+
+                    <table mat-table [dataSource]="dataSource">
+
+                        <ng-container matColumnDef="rutCliente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Rut Cliente </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.rutCliente}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="digito">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Digito </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.digitoCliente}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="nombreCompleto">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Completo </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.nombreCompletoCliente}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="fecha">
+                            <th mat-header-cell *matHeaderCellDef>Fec. Compra</th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.fecha | date:'dd/MM/yyyy HH:mm':'America/Santiago'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="total">
+                            <th mat-header-cell *matHeaderCellDef> Total </th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.total | currency:'CLP':'$'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="creditoFecha">
+                            <th mat-header-cell *matHeaderCellDef>Fec. Compromiso</th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.creditoFecha | date:'dd/MM/yyyy HH:mm':'America/Santiago'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="creditoFechaPago">
+                            <th mat-header-cell *matHeaderCellDef>Fec. Pago</th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.creditoFechaPago | date:'dd/MM/yyyy HH:mm':'America/Santiago'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="comentario">
+                            <th mat-header-cell *matHeaderCellDef>Comentario</th>
+                            <td mat-cell *matCellDef="let credito"> {{credito.comentario}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accion">
+                            <th mat-header-cell *matHeaderCellDef> Acción </th>
+                            <td mat-cell *matCellDef="let credito">
+                                <button mat-raised-button color="accent" [disabled]="credito?.creditoFechaPago!==null"
+                                    (click)="showDialog(credito)">
+                                    Pagar
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;">
+                        </tr>
+                    </table>
+                    <mat-paginator #paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons [pageSize]="10"
+                        aria-label="Seleccione">
+                    </mat-paginator>
+
+
+                </div>
+            </div>
+            <!--Tarjetas laterales-->
+            <div class="col-md-3">
+                <div class="card text-center bg-success text-white mb-3">
+                    <div class="card-body">
+                        <h3>Total Compras al Credito</h3>
+                        <h4 class="display-4">
+                            <i class="fas fa-users"></i> {{creditos?.length}}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <!--Fin tarjetas laterales-->
+
+        </div>
+    </div>
+</section>
+<app-confirmation-dialog></app-confirmation-dialog>

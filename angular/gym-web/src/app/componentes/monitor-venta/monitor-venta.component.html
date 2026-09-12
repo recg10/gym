@@ -1,0 +1,195 @@
+<section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Monitor de ventas - Seleccione una fecha a consultar</h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                <mat-label>Fecha</mat-label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="date" [(ngModel)]="selectedDate"  id="fechaInicio">
+            </div>
+            
+            <div class="col-md-3" style="display: flex; align-items: center;">
+                <button type="button" class="btn btn-primary" (click)="consultarMonitorFecha()" title="Ingrese fechas a consultar, ambos campos son requeridos" id="consultarAsistencia" #consultarAsistencia>Consultar</button>
+            </div> 
+            
+            <div class="col-md-3">
+                <button type="button" class="btn btn-primary" disabled (click)="null" title="Ingresed rut del alumno">Registrar Asistencia</button>
+            </div> 
+
+        </div>
+    </div>
+</section>
+<div *ngIf="msgError!=''" class="error-text" style="color: red;">
+    <li>
+        <strong>{{msgError}}</strong>
+    </li>
+</div>
+<div class="overlay" *ngIf="loader===true">
+    <div class="center">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+<!--Listado Clientes-->
+<section id="clientes">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Asistencia del dia</h4>
+                    </div>
+
+                    <mat-form-field appearance="standard">
+                        <mat-label>Buscar</mat-label>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese texto a buscar" #input />
+                    </mat-form-field>
+
+                    <table mat-table [dataSource]="dataSource">
+
+                        <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header > Id </th>
+                            <td mat-cell *matCellDef="let asistencia" > {{asistencia.id}} </td>
+                        </ng-container> 
+
+                         <ng-container matColumnDef="fecha">
+                            <th mat-header-cell *matHeaderCellDef >Fecha</th>
+                            <td mat-cell *matCellDef="let asistencia" > {{asistencia.fecha | date:'dd/MM/yyyy HH:mm':'America/Santiago'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="rutCliente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Rut Cliente </th>
+                            <td mat-cell *matCellDef="let asistencia"> {{asistencia.rutCliente}} </td>
+                        </ng-container>
+
+                         <ng-container matColumnDef="total">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total </th>
+                            <td mat-cell *matCellDef="let asistencia"> {{asistencia.total}} </td>
+                        </ng-container>
+
+                         <ng-container matColumnDef="rutUsuario">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header > Rut Usuario </th>
+                            <td mat-cell *matCellDef="let asistencia"> {{asistencia.rutUsuario}} </td>
+                        </ng-container>
+
+                         <ng-container matColumnDef="pagoTipo">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header >Estado Pago </th>
+                            <td mat-cell *matCellDef="let asistencia"> {{asistencia.pagoTipo}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;">
+                        </tr>
+                        <ng-container matColumnDef="acción">
+                            <th mat-header-cell *matHeaderCellDef> Accion </th>
+                            <td mat-cell *matCellDef="let asistencia">
+                            <button mat-mini-fab matTooltip="Editar" color="primary"
+                            data-bs-toggle="modal"  data-bs-target="#agregarClienteModal" (click)="null">
+                            <mat-icon>edit</mat-icon>
+                            </button>
+                                <a  class="btn btn-danger" role="button" (click)="showDialog(asistencia)">
+                                        <i class="fas fa-user-slash"></i> Eliminar
+                                    </a>
+                            <div ngif="asistencia.pagoTipo === 'Ingresado'">
+                                <a  class="btn btn-success" role="button" >
+                                        <i class="fas fa-money-bill-wave"></i> Pagar Y
+                                    </a>
+                            <a  class="btn btn-danger" role="button" (click)="showDialog(asistencia)">
+                                <i class="fas fa-user-slash"></i>Pagar X
+                            </a> 
+                          </div>
+                          </td>
+                        </ng-container>
+
+                        <!-- Fila expandible (Subtabla) -->
+                        <!-- <ng-container matColumnDef="expandedDetail">
+                          <td mat-cell *matCellDef="let elemento" [attr.colspan]="columnasPrincipales.length">
+                            <div class="elemento-detalle" [@detailExpand]="elemento == elementoExpandido ? 'expanded' : 'collapsed'">
+                              
+                             
+                              <div class="table-responsive">
+                              <table class="subtabla">
+                                <tr *ngFor="let sub of elemento.subelementos">
+                                  <td>{{sub.detalle}}</td>
+                                  <td>{{sub.valor}}</td>
+                                </tr>
+                              </table>
+                              </div>
+
+                            </div>
+                          </td>
+                        </ng-container> -->
+
+
+                    <!-- <tr mat-row *matRowDef="let elemento; columns: columnasPrincipales;"
+                        class="elemento-fila"
+                        [class.elemento-expandido]="elementoExpandido === elemento"
+                        (click)="elementoExpandido = elementoExpandido === elemento ? null : elemento">
+                    </tr> 
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detalle-fila"></tr>
+                    -->
+                    </table>
+                    <mat-paginator #paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons [pageSize]="10"
+                        aria-label="Seleccione">
+                    </mat-paginator>
+                </div>
+            </div>
+
+            <table mat-table [dataSource]="datos" multiTemplateDataRows class="mat-elevation-z8">
+  
+            <!-- Columna Principal -->
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td mat-cell *matCellDef="let elemento"> {{elemento.fecha}} </td>
+            </ng-container>
+
+            <!-- Fila expandible (Subtabla) -->
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let elemento" [attr.colspan]="columnasPrincipales.length">
+                <div class="elemento-detalle" [@detailExpand]="elemento == elementoExpandido ? 'expanded' : 'collapsed'">
+                  
+                  <!-- Aquí va la Subtabla -->
+                  <div class="table-responsive">
+                  <table class="subtabla">
+                    <tr *ngFor="let sub of elemento.detalles">
+                      <td>{{sub.articuloDescripcion}}</td>
+                      <td>{{sub.precio}}</td>
+                    </tr>
+                  </table>
+                  </div>
+
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnasPrincipales"></tr>
+            <tr mat-row *matRowDef="let elemento; columns: columnasPrincipales;"
+                class="elemento-fila"
+                [class.elemento-expandido]="elementoExpandido === elemento"
+                (click)="elementoExpandido = elementoExpandido === elemento ? null : elemento">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detalle-fila"></tr>
+          </table>
+            <!--Tarjetas laterales-->
+            <div class="col-md-3">
+                <div class="card text-center bg-success text-white mb-3">
+                    <div class="card-body">
+                        <h3>Total Asistencias</h3>
+                        <h4 class="display-4">
+                            <i class="fas fa-users"></i> {{ ventas?.length }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <!--Fin tarjetas laterales-->
+
+        </div>
+    </div>
+</section>
+<app-confirmation-dialog></app-confirmation-dialog>

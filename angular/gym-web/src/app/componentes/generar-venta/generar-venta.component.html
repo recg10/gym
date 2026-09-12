@@ -1,0 +1,155 @@
+<div class="overlay" *ngIf="loader===true">
+    <div class="center">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card panel-card shadow-sm">
+        <div class="card-header panel-header text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0">Generar venta</h4>
+              <small class="opacity-75">Registro rápido de productos</small>
+            </div>
+            <span class="badge bg-light text-dark">Caja</span>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+              <label class="form-label fw-bold" for="articuloSelect">Buscar artículo</label>
+              <input
+                id="articuloSelect"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Buscar por nombre o código"
+                [(ngModel)]="filtroArticulo"
+                name="filtroArticulo"
+                (input)="filtrarArticulos()"
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold" for="cantidadInput">Cantidad</label>
+              <input id="cantidadInput" type="number" class="form-control form-control-lg" min="1" [(ngModel)]="cantidad" name="cantidad">
+            </div>
+          </div>
+
+          <div class="lista-articulos mt-3">
+            <div class="producto-item" *ngFor="let articulo of articulosFiltrados" [class.selected]="articuloSeleccionado?.id === articulo.id" (click)="seleccionarArticulo(articulo)">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div style="font-size: 16px;" class="fw-bold">{{ articulo.nombre }}</div>
+                  <small class="text-muted">{{ articulo.codigo }}</small>
+                </div>
+                <div class="text-end">
+                  <div style="font-size: 16px;" class="text-primary fw-bold">${{ articulo.precio_venta }}</div>
+                  <small style="font-size: 16px;" class="badge"  [ngClass]="(articulo.stock ?? 0) > 0 ? 'bg-success' : 'bg-danger'">
+                    Stock: {{ articulo.stock ?? 0 }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-2"> 
+        <div class="d-grid gap-2 d-md-flex mt-4">
+            <button class="btn btn-success btn-lg" type="button" (click)="agregarArticulo()">
+            <i class="fas fa-plus-circle me-2"></i>Agregar al carrito
+            </button>            
+        </div>
+        <br/>
+        <div class="d-grid gap-2 d-md-flex mt-4">            
+            <button [disabled]="detallesVentas.length === 0" class="btn btn-primary btn-lg" type="button" (click)="showDialog()">
+            <i class="fas fa-check-circle me-2"></i>Finalizar venta
+            </button>
+        </div>
+        <br/>
+        <!-- <div class="d-grid gap-2 d-md-flex mt-4">            
+            <button class="btn btn-danger btn-lg" type="button" >
+            <i class="fas fa-times-circle me-2"></i>Cancelar venta
+            </button>
+        </div> -->
+        <div>
+            <div *ngIf="mensaje" class="alert mt-4 mb-0" [ngClass]="mensaje.includes('correctamente') ? 'alert-success' : 'alert-info'">
+            {{ mensaje }}
+          </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card panel-summary shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Detalle de venta</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="detallesVentas.length === 0" class="empty-state text-center py-4">
+            <i class="fas fa-shopping-basket fa-2x mb-2"></i>
+            <p class="mb-0 text-muted">Aún no hay artículos agregados.</p>
+          </div>
+          <ul class="list-group list-group-flush" *ngIf="detallesVentas.length > 0">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let detalle of detallesVentas">
+              <span style="font-size: 16px;">{{ detalle.articuloDescripcion }} x {{ detalle.cantidad }}</span>
+              <div class="d-flex align-items-center gap-2">
+                <strong>${{ (detalle.precio ?? 0) * (detalle.cantidad ?? 0) }}</strong>
+                <button class="btn btn-sm btn-outline-danger" type="button" (click)="eliminarDetalle(detalle)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </li>
+          </ul>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center total-box">
+            <span class="fw-bold">Total</span>
+            <h4 class="mb-0 text-success" style="font-size: 16px;">${{ total }}</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="card panel-summary shadow-sm mt-3">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Ventas del día</h5>
+        </div>
+        <div class="card-body text-center">
+          <h2 class="mb-0 text-success">${{ totalDia }}</h2>
+          <small class="text-muted">Resumen del día actual</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="payment-modal-backdrop" *ngIf="mostrarDialogoPago">
+  <div class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-modal-title">
+    <div class="payment-modal-header">
+      <h2 id="payment-modal-title">Forma de pago</h2>
+      <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarDialogoPago()"></button>
+    </div>
+    <div class="payment-modal-body">
+      <p>Seleccione una opción para finalizar la venta.</p>
+      <div class="payment-options">
+        <label [class.selected]="tipoPagoSeleccionado === 'contado'">
+          <input type="radio" name="tipoPago" value="contado" [(ngModel)]="tipoPagoSeleccionado">
+          <span>Pago Contado</span>
+        </label>
+        <label [class.selected]="tipoPagoSeleccionado === 'credito'">
+          <input type="radio" name="tipoPago" value="credito" [(ngModel)]="tipoPagoSeleccionado">
+          <span>Crédito</span>
+        </label>
+        <label [class.selected]="tipoPagoSeleccionado === 'debito'">
+          <input type="radio" name="tipoPago" value="debito" [(ngModel)]="tipoPagoSeleccionado">
+          <span>Débito</span>
+        </label>
+      </div>
+    </div>
+    <div class="payment-modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cerrarDialogoPago()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="!tipoPagoSeleccionado" (click)="finalizarVenta()">Finalizar</button>
+    </div>
+  </div>
+</div>
+<app-confirmation-dialog></app-confirmation-dialog>

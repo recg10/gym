@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Registrar Asistencia</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill">
+      <mat-label>RUT del Alumno</mat-label>
+      <input 
+        id="rutInput"
+        matInput 
+        formControlName="rut"
+        placeholder="12345678-K"
+        (keyup)="formatearRut($event)"
+        maxlength="10"
+        aria-label="RUT del Alumno">
+      <mat-error *ngIf="form.get('rut')?.hasError('required')">
+        El RUT es obligatorio
+      </mat-error>
+      <mat-error *ngIf="form.get('rut')?.hasError('invalidRut')">
+        RUT inválido. Formato: 12345678-K
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-button [disabled]="desactivarBoton" (click)="onAccept()" [disabled]="form.invalid">Aceptar</button>
+</mat-dialog-actions>
