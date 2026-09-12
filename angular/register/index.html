@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro deportivo Pedro Muñoz - Sport Club 27 - Página de Ingreso</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="favicon_io/site.webmanifest">
+    <link rel="icon" href="favicon_io/favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <H1 class="site-title">Centro deportivo Pedro Muñoz</H1>
+    <img src="pedroMunoz.jpg" alt="Logo Pedro Muñoz">
+    <input type="text" placeholder="Ingrese RUT" id="rut">
+    <div id="captcha">Código CAPTCHA: <span id="captchaCode"></span></div>
+    <input type="text" placeholder="Ingrese el código CAPTCHA" id="captchaInput">
+    <button onclick="ingresar()">Ingresar</button>
+    <a href="qr.html">Ver Código QR</a>
+    <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
+
+    <footer>
+        Creado por <a href="http://castrosoft.cl" target="_blank">castrosoft.cl</a>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
