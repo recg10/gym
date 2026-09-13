@@ -30,7 +30,7 @@ export class ArticuloService{
 
     getAll(): Observable<Articulo[]> {
         this.usuario = JSON.parse(localStorage.getItem('usuario')!);
-        const url=ConstantsComponent.url+":8070/articulo/all";
+        const url=ConstantsComponent.url+":8000/articulo/all";
         //const url="http://localhost:8070/articulo/all";
         let body = {
           //"usuarioRut":this.usuario.rut
@@ -42,7 +42,7 @@ export class ArticuloService{
 
       sendMail(): Observable<any> {
         //const url=ConstantsComponent.url+":8090/articulo/notificar-stock-critico";
-        const url=ConstantsComponent.url+":8070/articulo/notificar-stock-critico";
+        const url=ConstantsComponent.url+":8000/articulo/notificar-stock-critico";
           let body = {      
           };
           return this.httpClient.post<any>(url, body,{
@@ -64,7 +64,7 @@ export class ArticuloService{
  */
       agregar(articulo: Articulo){
         //this.usuario = JSON.parse(localStorage.getItem('usuario')!);
-        const url=ConstantsComponent.url+":8070/articulo/guardar";
+        const url=ConstantsComponent.url+":8000/articulo/guardar";
         //const url="http://localhost:8070/articulo/guardar";
         //cuenta.usuarioRut=this.usuario.rut;
         let payload = {
@@ -76,7 +76,7 @@ export class ArticuloService{
       }
 
       eliminar(articulo: Articulo){        
-        const url=ConstantsComponent.url+":8070/articulo/del/"+articulo.id;
+        const url=ConstantsComponent.url+":8000/articulo/del/"+articulo.id;
         return this.httpClient.delete<string>(url, {
           headers: this.getHeaders()
         })       
