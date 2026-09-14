@@ -51,7 +51,7 @@ public class ParametroServiceImpl implements PrametroService {
             return preventivaDTO;
         } else {
             log.error("RecordNotFoundException");
-            throw new RecordNotFoundException("No parametro record exist for given Codigo {}",""+id););
+            throw new RecordNotFoundException("No parametro record exist for given Codigo {}",""+id);
         }
     }
 

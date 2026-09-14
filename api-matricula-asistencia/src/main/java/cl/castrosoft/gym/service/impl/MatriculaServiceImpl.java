@@ -249,7 +249,7 @@ public class MatriculaServiceImpl implements MatriculaService {
         //ObjectMapper mapper = new ObjectMapper();
         //ParametroDTO mail = mapper.convertValue(response.getBody().getPayload(), new TypeReference<ParametroDTO>(){});
         //dto.setTo(mail.getTexto());
-        int mailActivo = parametroRepository.findByNombre("MAIL_ACTIVO").map(ParametroEntity::getValor).orElse(0);
+        int mailActivo = parametroRepository.findByNombre("MAIL_ACTIVO").map(ParametroEntity::getNumerico).orElse(0);
         if (mailActivo==1){
             log.info("Envio de mail activado");
             parametroRepository.findByNombre("MAIL_NOTIFICACION").ifPresent(param -> {
